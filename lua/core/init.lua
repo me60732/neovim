@@ -1,9 +1,18 @@
--- Auto-load all Lua files in core/
-local core_dir = vim.fn.stdpath("config") .. "/lua/core"
-for _, file in ipairs(vim.fn.globpath(core_dir, "*.lua", false, true)) do
+-- Auto-load all Lua files and submodules in this directory
+local mod_dir = ...
+local dir_path = vim.fn.stdpath("config") .. "/lua/" .. mod_dir
+
+-- Load all .lua files (excluding init.lua)
+for _, file in ipairs(vim.fn.globpath(dir_path, "*.lua", false, true)) do
   local name = vim.fn.fnamemodify(file, ":t:r")
   if name ~= "init" then
-    require("core." .. name)
+    pcall(require, mod_dir .. "." .. name)
   end
+end
+
+-- Load all subdirectories that contain init.lua
+for _, subdir in ipairs(vim.fn.globpath(dir_path, "*/init.lua", false, true)) do
+  local subname = vim.fn.fnamemodify(vim.fn.fnamemodify(subdir, ":h"), ":t")
+  pcall(require, mod_dir .. "." .. subname)
 end
 
