@@ -1,13 +1,19 @@
--- Bootstrap Lazy.nvim
-local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
-if not vim.loop.fs_stat(lazypath) then
-  vim.fn.system({
-    "git", "clone", "--filter=blob:none",
-    "https://github.com/folke/lazy.nvim", lazypath
-  })
-end
-vim.opt.rtp:prepend(lazypath)
+-- Load Lazy.nvim itself as a plugin first
+vim.opt.rtp:prepend(vim.fn.stdpath("data") .. "/lazy/lazy.nvim")
 
--- Load plugins from your modular directory
+-- Load Lazy.nvim plugin manually
+require("lazy").setup({
+  { "folke/lazy.nvim", version = false },
+}, {
+  performance = {
+    rtp = {
+      disabled_plugins = {
+        "gzip", "matchit", "matchparen", "netrwPlugin", "tarPlugin", "tohtml", "tutor", "zipPlugin",
+      },
+    },
+  },
+})
+
+-- Load your plugin declarations
 require("plugins")
 
