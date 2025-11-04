@@ -1,16 +1,16 @@
--- Auto-load all top-level Lua modules (files and directories with init.lua)
-local config_dir = vim.fn.stdpath("config") .. "/lua"
-for _, path in ipairs(vim.fn.globpath(config_dir, "*", false, true)) do
-  local name = vim.fn.fnamemodify(path, ":t")
-  local is_lua = name:match("%.lua$")
-  local mod_name = is_lua and name:gsub("%.lua$", "") or name
+-- ~/.config/nvim/init.lua
 
-  local full_path = config_dir .. "/" .. name
-  local is_dir = vim.fn.isdirectory(full_path) == 1
-  local has_init = is_dir and vim.fn.filereadable(full_path .. "/init.lua") == 1
+-- Recursively load everything under lua/
+local modules = require("core.template_init")("")
 
-  if is_lua or has_init then
-    pcall(require, mod_name)
+for _, mod in ipairs(modules) do
+  if type(mod) == "function" then
+    mod()
+  elseif type(mod) == "table" and mod.setup then
+    mod.setup()
   end
 end
+
+-- Load Lazy.nvim last
+require("core.lazy")
 
