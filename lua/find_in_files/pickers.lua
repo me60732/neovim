@@ -1,33 +1,29 @@
-
 local M = {}
+local pickers = require("telescope.pickers")
+local finders = require("telescope.finders")
+local actions = require("telescope.actions")
+local action_state = require("telescope.actions.state")
+local conf = require("telescope.config").values
 
-local ui = require("find_in_files.ui")
-local engine = require("find_in_files.engine")
-local pickers = require("find_in_files.pickers")
+M.select_include_path = function(on_select)
+  local paths = vim.fn.glob("**/", 0, 1)
 
-M.launch = function()
-  local cwd = vim.fn.getcwd()
-
-  ui.prompt("Find:", nil, function(find)
-    if find == "" then return end
-
-    ui.prompt("Replace (optional):", nil, function(replace)
-      pickers.select_include_path(function(include)
-        ui.prompt("Exclude path(s) (comma-separated, optional):", nil, function(exclude)
-          ui.prompt("Ignore patterns (e.g. .git,node_modules):", nil, function(ignore)
-            engine.run({
-              find = find,
-              replace = replace,
-              include = include or cwd,
-              exclude = exclude,
-              ignore = ignore,
-            })
-          end)
-        end)
+  pickers.new({}, {
+    prompt_title = "Include Path",
+    finder = finders.new_table({ results = paths }),
+    sorter = conf.generic_sorter({}),
+    attach_mappings = function(prompt_bufnr, map)
+      map("i", "<CR>", function()
+        local selection = action_state.get_selected_entry()
+        local picker = action_state.get_current_picker(prompt_bufnr)
+        picker:close()
+        on_select(selection[1])
       end)
-    end)
-  end)
+      return true
+    end,
+  }):find()
 end
+
 
 return M
 

@@ -1,28 +1,26 @@
 local M = {}
 
-local function prompt(label, default, callback)
-  vim.ui.input({ prompt = label, default = default or "" }, function(input)
-    callback(input or "")
-  end)
-end
+local ui = require("find_in_files.ui")
+local engine = require("find_in_files.engine")
+local pickers = require("find_in_files.pickers")
 
 M.launch = function()
-  prompt("Find:", nil, function(find)
+  local cwd = vim.fn.getcwd()
+
+  ui.prompt("Find:", nil, function(find)
     if find == "" then return end
 
-    prompt("Replace (optional):", nil, function(replace)
-      prompt("Include path (optional):", "", function(include)
-        prompt("Exclude path(s) (comma-separated, optional):", nil, function(exclude)
-          prompt("Ignore patterns (e.g. .git,node_modules):", nil, function(ignore)
-
-            -- TODO: handle exclude and ignore logic
-            require("spectre").open({
-              search_text = find,
-              replace_text = replace ~= "" and replace or nil,
-              path = include,
-              is_insert_mode = false,
+    ui.prompt("Replace (optional):", nil, function(replace)
+      pickers.select_include_path(function(include)
+        ui.prompt("Exclude path(s) (comma-separated, optional):", nil, function(exclude)
+          ui.prompt("Ignore patterns (e.g. .git,node_modules):", nil, function(ignore)
+            engine.run({
+              find = find,
+              replace = replace,
+              include = include or cwd,
+              exclude = exclude,
+              ignore = ignore,
             })
-
           end)
         end)
       end)
