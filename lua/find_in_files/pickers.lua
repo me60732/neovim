@@ -15,8 +15,7 @@ M.select_include_path = function(on_select)
     attach_mappings = function(prompt_bufnr, map)
       map("i", "<CR>", function()
         local selection = action_state.get_selected_entry()
-        local picker = action_state.get_current_picker(prompt_bufnr)
-        picker:close()
+        actions.close(prompt_bufnr) -- ✅ Correct way to close the picker
         on_select(selection[1])
       end)
       return true
@@ -24,6 +23,6 @@ M.select_include_path = function(on_select)
   }):find()
 end
 
-
 return M
+
 
