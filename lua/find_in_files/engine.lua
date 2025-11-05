@@ -1,7 +1,7 @@
 local M = {}
 
 M.run = function(params)
-  require("fin_in_files.utils").write_ignore_file(params.exclude, params.ignore)
+  require("find_in_files.utils").write_ignore_file(params.exclude, params.ignore)
 
   require("spectre").open({
     search_text = params.find,
