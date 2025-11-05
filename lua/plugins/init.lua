@@ -14,7 +14,7 @@ local function deep_flatten(tbl)
   return result
 end
 
-local collected = require("core.template_init")()
+local collected = require("core.loader")()
 local specs = deep_flatten(collected)
 
 --print("Flattened plugin specs:\n", vim.inspect(specs))

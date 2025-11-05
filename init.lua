@@ -3,7 +3,7 @@
 -- Load Lazy.nvim last
 require("core.lazy")
 -- Recursively load everything under lua/
-local modules = require("core.template_init")("")
+local modules = require("core.loader")("")
 
 for _, mod in ipairs(modules) do
   if type(mod) == "function" then

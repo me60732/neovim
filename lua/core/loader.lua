@@ -20,7 +20,7 @@ return function(mod_dir)
 
   for _, file in ipairs(vim.fn.globpath(dir_path, "**/*.lua", false, true)) do
     local rel_path = file:sub(#base_path + 1):gsub("/", "."):gsub("%.lua$", "")
-    if rel_path ~= "core.template_init" then
+    if rel_path ~= "core.loader" then
       --print("Trying to load:", rel_path)
       local ok, mod = pcall(require, rel_path)
       --print("Result for", rel_path, ":", ok, vim.inspect(mod))

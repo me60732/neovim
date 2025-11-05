@@ -1,3 +1,3 @@
---return require("core.template_init")(...)
-return require("core.template_init")()
+--return require("core.")(...)
+return require("core.loader")()
 
